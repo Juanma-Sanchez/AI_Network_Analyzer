@@ -1,3 +1,2 @@
-network_trace/*
-model/*
 log/*
+*.pyc

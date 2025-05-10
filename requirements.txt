@@ -1,6 +1,3 @@
 requests
-tensorflow
-keras
-pyyaml
-numpy
+google-genai
 click
