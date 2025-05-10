@@ -10,6 +10,7 @@ def run_analyzer(analyzer_type):
         analyzer = AiAnalyzer()
     else:
         analyzer = LegacyAnalyzer()
+    print(analyzer)
 
 if __name__ == '__main__':
     run_analyzer()
