@@ -1,4 +1,22 @@
 services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      mgmt:
+        ipv4_address: 10.0.10.90
+  exporter:
+    image: prom/snmp-exporter:latest
+    volumes:
+      - ./prometheus/snmp.yml:/etc/snmp_exporter/snmp.yml
+    ports:
+      - "9116:9116"
+    networks:
+      mgmt:
+        ipv4_address: 10.0.10.96
   web:
     build:
       context: host
@@ -75,6 +93,8 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
+      mgmt:
+        ipv4_address: 10.0.10.101
       internet:
         ipv4_address: 10.0.0.1
       agg1:
@@ -226,6 +246,11 @@ services:
       agg9:
         ipv4_address: 10.0.19.3
 networks:
+  mgmt:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.10.0/24"
   internet:
     driver: bridge
     ipam:

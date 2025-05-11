@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt update
-RUN apt install -y frr frr-pythontools iproute2 net-tools iputils-ping nano
+RUN apt install -y frr frr-pythontools snmpd snmp libsnmp-dev iproute2 net-tools iputils-ping nano
 
 COPY entrypoint.sh entrypoint.sh
 COPY daemons /etc/frr/daemons
