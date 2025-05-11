@@ -1,0 +1,13 @@
+# frr-config/daemons
+# Configuracion de demonios FRR
+zebra=yes
+ripd=no  # Cambiar a yes para RIP
+ripngd=no
+ospfd=no
+ospf6d=no
+bgpd=no
+isisd=yes # Cambiar a yes para IS-IS
+# ... otros demonios en "no"
+
+vtysh_enable=yes
+# ... otras opciones

@@ -8,11 +8,11 @@ services:
       - "8000:8000"
     command: >
       bash -c "ip route delete default && 
-      ip route add default via 10.0.9.1 && 
+      ip route add default via 10.0.0.1 && 
       python -m http.server 8000"
     networks:
       internet:
-        ipv4_address: 10.0.9.2
+        ipv4_address: 10.0.0.2
     cap_add:
     - NET_ADMIN
   H1:
@@ -22,32 +22,277 @@ services:
     hostname: H1
     command: >
       bash -c "ip route delete default &&
-      ip route add default via 10.0.0.1 &&
-      tail -f /dev/null"
+      ip route add default via 10.0.1.1 &&
+      python host.py"
     networks:
       local1:
-        ipv4_address: 10.0.0.2
+        ipv4_address: 10.0.1.2
+    cap_add:
+    - NET_ADMIN
+  H2:
+    build:
+      context: host
+    image: network_analyzer_host
+    hostname: H2
+    command: >
+      bash -c "ip route delete default &&
+      ip route add default via 10.0.2.1 &&
+      python host.py"
+    networks:
+      local2:
+        ipv4_address: 10.0.2.2
+    cap_add:
+    - NET_ADMIN
+  H3:
+    build:
+      context: host
+    image: network_analyzer_host
+    hostname: H3
+    command: >
+      bash -c "ip route delete default &&
+      ip route add default via 10.0.3.1 &&
+      python host.py"
+    networks:
+      local3:
+        ipv4_address: 10.0.3.2
     cap_add:
     - NET_ADMIN
   R1:
-    image: ubuntu
+    build:
+      context: router
+    image: network_analyzer_router
+    command: >
+      bash -c "ip route add 10.0.1.0/24 via 10.0.11.3 metric 20 &&
+      ip route append 10.0.1.0/24 via 10.0.12.3 metric 30 &&
+      ip route add 10.0.2.0/24 via 10.0.11.3 metric 20 &&
+      ip route append 10.0.2.0/24 via 10.0.12.3 metric 20 &&
+      ip route add 10.0.3.0/24 via 10.0.11.3 metric 30 &&
+      ip route append 10.0.3.0/24 via 10.0.12.3 metric 20 &&
+      tail -f /dev/null"
     hostname: R1
-    command: tail -f /dev/null
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
     networks:
       internet:
-        ipv4_address: 10.0.9.1
-      local1:
         ipv4_address: 10.0.0.1
+      agg1:
+        ipv4_address: 10.0.11.2
+      agg2:
+        ipv4_address: 10.0.12.2
+  R2:
+    build:
+      context: router
+    image: network_analyzer_router
+    command: >
+      bash -c "ip route add 10.0.0.0/24 via 10.0.11.2 metric 10 &&
+      ip route append 10.0.0.0/24 via 10.0.13.3 metric 20 &&
+      ip route add 10.0.1.0/24 via 10.0.14.3 metric 10 &&
+      ip route append 10.0.1.0/24 via 10.0.15.3 metric 20 &&
+      ip route append 10.0.1.0/24 via 10.0.13.3 metric 30 &&
+      ip route add 10.0.2.0/24 via 10.0.14.3 metric 20 &&
+      ip route append 10.0.2.0/24 via 10.0.15.3 metric 10 &&
+      ip route append 10.0.2.0/24 via 10.0.13.3 metric 20 &&
+      ip route add 10.0.3.0/24 via 10.0.14.3 metric 30 &&
+      ip route append 10.0.3.0/24 via 10.0.15.3 metric 10 &&
+      ip route append 10.0.3.0/24 via 10.0.13.3 metric 20 &&
+      tail -f /dev/null"
+    hostname: R2
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
+    networks:
+      agg1:
+        ipv4_address: 10.0.11.3
+      agg3:
+        ipv4_address: 10.0.13.2
+      agg4:
+        ipv4_address: 10.0.14.2
+      agg5:
+        ipv4_address: 10.0.15.2
+  R3:
+    build:
+      context: router
+    image: network_analyzer_router
+    command: >
+      bash -c "ip route add 10.0.0.0/24 via 10.0.12.2 metric 10 &&
+      ip route append 10.0.0.0/24 via 10.0.13.2 metric 20 &&
+      ip route add 10.0.1.0/24 via 10.0.16.3 metric 20 &&
+      ip route append 10.0.1.0/24 via 10.0.17.3 metric 30 &&
+      ip route append 10.0.1.0/24 via 10.0.13.2 metric 20 &&
+      ip route add 10.0.2.0/24 via 10.0.16.3 metric 10 &&
+      ip route append 10.0.2.0/24 via 10.0.17.3 metric 20 &&
+      ip route append 10.0.2.0/24 via 10.0.13.2 metric 20 &&
+      ip route add 10.0.3.0/24 via 10.0.16.3 metric 20 &&
+      ip route append 10.0.3.0/24 via 10.0.17.3 metric 10 &&
+      ip route append 10.0.3.0/24 via 10.0.13.2 metric 30 &&
+      tail -f /dev/null"
+    hostname: R3
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
+    networks:
+      agg2:
+        ipv4_address: 10.0.12.3
+      agg3:
+        ipv4_address: 10.0.13.3
+      agg6:
+        ipv4_address: 10.0.16.2
+      agg7:
+        ipv4_address: 10.0.17.2
+  R4:
+    build:
+      context: router
+    image: network_analyzer_router
+    command: >
+      bash -c "ip route add 10.0.0.0/24 via 10.0.14.2 metric 20 &&
+      ip route append 10.0.0.0/24 via 10.0.18.3 metric 30 &&
+      ip route add 10.0.2.0/24 via 10.0.18.3 metric 10 &&
+      ip route append 10.0.2.0/24 via 10.0.14.2 metric 20 &&
+      ip route add 10.0.3.0/24 via 10.0.18.3 metric 20 &&
+      ip route append 10.0.3.0/24 via 10.0.14.2 metric 30 &&
+      tail -f /dev/null"
+    hostname: R4
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
+    networks:
+      local1:
+        ipv4_address: 10.0.1.1
+      agg4:
+        ipv4_address: 10.0.14.3
+      agg8:
+        ipv4_address: 10.0.18.2
+  R5:
+    build:
+      context: router
+    image: network_analyzer_router
+    command: >
+      bash -c "ip route add 10.0.0.0/24 via 10.0.15.2 metric 20 &&
+      ip route append 10.0.0.0/24 via 10.0.16.2 metric 20 &&
+      ip route append 10.0.0.0/24 via 10.0.18.2 metric 30 &&
+      ip route append 10.0.0.0/24 via 10.0.19.3 metric 30 &&
+      ip route add 10.0.1.0/24 via 10.0.18.2 metric 10 &&
+      ip route append 10.0.1.0/24 via 10.0.15.2 metric 20 &&
+      ip route append 10.0.1.0/24 via 10.0.16.2 metric 30 &&
+      ip route append 10.0.1.0/24 via 10.0.19.3 metric 40 &&
+      ip route add 10.0.3.0/24 via 10.0.19.3 metric 10 &&
+      ip route append 10.0.3.0/24 via 10.0.16.2 metric 20 &&
+      ip route append 10.0.3.0/24 via 10.0.15.2 metric 30 &&
+      ip route append 10.0.3.0/24 via 10.0.18.2 metric 40 &&
+      tail -f /dev/null"
+    hostname: R5
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
+    networks:
+      local2:
+        ipv4_address: 10.0.2.1
+      agg5:
+        ipv4_address: 10.0.15.3
+      agg6:
+        ipv4_address: 10.0.16.3
+      agg8:
+        ipv4_address: 10.0.18.3
+      agg9:
+        ipv4_address: 10.0.19.2
+  R6:
+    build:
+      context: router
+    image: network_analyzer_router
+    command: >
+      bash -c "ip route add 10.0.0.0/24 via 10.0.17.2 metric 20 &&
+      ip route append 10.0.0.0/24 via 10.0.19.2 metric 30 &&
+      ip route add 10.0.2.0/24 via 10.0.19.2 metric 10 &&
+      ip route append 10.0.2.0/24 via 10.0.17.2 metric 20 &&
+      ip route add 10.0.1.0/24 via 10.0.19.2 metric 20 &&
+      ip route append 10.0.1.0/24 via 10.0.17.2 metric 30 &&
+      tail -f /dev/null"
+    hostname: R6
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    - SYS_ADMIN
+    networks:
+      local3:
+        ipv4_address: 10.0.3.1
+      agg7:
+        ipv4_address: 10.0.17.3
+      agg9:
+        ipv4_address: 10.0.19.3
 networks:
   internet:
     driver: bridge
     ipam:
       config:
-        - subnet: "10.0.9.0/24"
-          gateway: "10.0.9.254"
+        - subnet: "10.0.0.0/24"
+          gateway: "10.0.0.254"
   local1:
     driver: bridge
     ipam:
       config:
-        - subnet: "10.0.0.0/24"
-          gateway: "10.0.0.254"
+        - subnet: "10.0.1.0/24"
+          gateway: "10.0.1.254"
+  local2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.2.0/24"
+          gateway: "10.0.2.254"
+  local3:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.3.0/24"
+          gateway: "10.0.3.254"
+  agg1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.11.0/24"
+  agg2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.12.0/24"
+  agg3:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.13.0/24"
+  agg4:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.14.0/24"
+  agg5:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.15.0/24"
+  agg6:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.16.0/24"
+  agg7:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.17.0/24"
+  agg8:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.18.0/24"
+  agg9:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "10.0.19.0/24"
+  
