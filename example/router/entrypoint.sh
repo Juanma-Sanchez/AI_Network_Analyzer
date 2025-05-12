@@ -8,4 +8,4 @@ done >> /etc/frr/frr.conf
 
 echo ! >> /etc/frr/frr.conf
 
-/usr/lib/frr/zebra -f /etc/frr/frr.conf -d & /usr/lib/frr/isisd -f /etc/frr/frr.conf -d & service frr start & tail -f /dev/null
+/usr/lib/frr/zebra -f /etc/frr/frr.conf -d & /usr/lib/frr/isisd -f /etc/frr/frr.conf -d & service frr start & service snmpd restart & tail -f /dev/null

@@ -86,6 +86,8 @@ services:
       ip route append 10.0.2.0/24 via 10.0.12.3 metric 20 &&
       ip route add 10.0.3.0/24 via 10.0.11.3 metric 30 &&
       ip route append 10.0.3.0/24 via 10.0.12.3 metric 20 &&
+      sed -i 's/agentaddress.*/agentaddress  udp:10.0.10.101:161/' /etc/snmp/snmpd.conf &&
+      service snmpd restart &&
       tail -f /dev/null"
     hostname: R1
     cap_add:
@@ -117,6 +119,8 @@ services:
       ip route add 10.0.3.0/24 via 10.0.14.3 metric 30 &&
       ip route append 10.0.3.0/24 via 10.0.15.3 metric 10 &&
       ip route append 10.0.3.0/24 via 10.0.13.3 metric 20 &&
+      sed -i 's/agentaddress.*/agentaddress  udp:10.0.10.102:161/' /etc/snmp/snmpd.conf &&
+      service snmpd restart &&
       tail -f /dev/null"
     hostname: R2
     cap_add:
@@ -124,6 +128,8 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
+      mgmt:
+        ipv4_address: 10.0.10.102
       agg1:
         ipv4_address: 10.0.11.3
       agg3:
@@ -148,6 +154,8 @@ services:
       ip route add 10.0.3.0/24 via 10.0.16.3 metric 20 &&
       ip route append 10.0.3.0/24 via 10.0.17.3 metric 10 &&
       ip route append 10.0.3.0/24 via 10.0.13.2 metric 30 &&
+      sed -i 's/agentaddress.*/agentaddress  udp:10.0.10.103:161/' /etc/snmp/snmpd.conf &&
+      service snmpd restart &&
       tail -f /dev/null"
     hostname: R3
     cap_add:
@@ -155,6 +163,8 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
+      mgmt:
+        ipv4_address: 10.0.10.103
       agg2:
         ipv4_address: 10.0.12.3
       agg3:
@@ -174,6 +184,8 @@ services:
       ip route append 10.0.2.0/24 via 10.0.14.2 metric 20 &&
       ip route add 10.0.3.0/24 via 10.0.18.3 metric 20 &&
       ip route append 10.0.3.0/24 via 10.0.14.2 metric 30 &&
+      sed -i 's/agentaddress.*/agentaddress  udp:10.0.10.104:161/' /etc/snmp/snmpd.conf &&
+      service snmpd restart &&
       tail -f /dev/null"
     hostname: R4
     cap_add:
@@ -181,6 +193,8 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
+      mgmt:
+        ipv4_address: 10.0.10.104
       local1:
         ipv4_address: 10.0.1.1
       agg4:
@@ -204,6 +218,8 @@ services:
       ip route append 10.0.3.0/24 via 10.0.16.2 metric 20 &&
       ip route append 10.0.3.0/24 via 10.0.15.2 metric 30 &&
       ip route append 10.0.3.0/24 via 10.0.18.2 metric 40 &&
+      sed -i 's/agentaddress.*/agentaddress  udp:10.0.10.105:161/' /etc/snmp/snmpd.conf &&
+      service snmpd restart &&
       tail -f /dev/null"
     hostname: R5
     cap_add:
@@ -211,6 +227,8 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
+      mgmt:
+        ipv4_address: 10.0.10.105
       local2:
         ipv4_address: 10.0.2.1
       agg5:
@@ -232,6 +250,8 @@ services:
       ip route append 10.0.2.0/24 via 10.0.17.2 metric 20 &&
       ip route add 10.0.1.0/24 via 10.0.19.2 metric 20 &&
       ip route append 10.0.1.0/24 via 10.0.17.2 metric 30 &&
+      sed -i 's/agentaddress.*/agentaddress  udp:10.0.10.106:161/' /etc/snmp/snmpd.conf &&
+      service snmpd restart &&
       tail -f /dev/null"
     hostname: R6
     cap_add:
@@ -239,6 +259,8 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
+      mgmt:
+        ipv4_address: 10.0.10.106
       local3:
         ipv4_address: 10.0.3.1
       agg7:

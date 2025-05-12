@@ -3,6 +3,7 @@ FROM ubuntu:latest
 RUN apt update
 RUN apt install -y frr frr-pythontools snmpd snmp libsnmp-dev iproute2 net-tools iputils-ping nano
 
+COPY snmpd.conf /etc/snmp/snmpd.conf
 COPY entrypoint.sh entrypoint.sh
 COPY daemons /etc/frr/daemons
 COPY frr.conf /etc/frr/frr.conf
