@@ -1,8 +1,8 @@
 # AI Network Analyzer
 
-Blabla
+This repository contains an experimental network analyzer that takes traffic metrics from a monitoring system and uses AI and/or statistics to determine wether the traffic per interface is anomalus or not based on previous metrics.
 
-TODO add image of overall system
+![AI_Network_Analyzer Concept](resources/images/Concept.jpg)
 
 ## AI Analyzer
 
