@@ -6,12 +6,12 @@ scrape_configs:
         - linux_router
     static_configs:
       - targets:
-        - 10.0.10.101 # R1
-        - 10.0.10.102 # R2
-        - 10.0.10.103 # R3
-        - 10.0.10.104 # R4
-        - 10.0.10.105 # R5
-        - 10.0.10.106 # R6
+        - R1
+        - R2
+        - R3
+        - R4
+        - R5
+        - R6
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -19,3 +19,5 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: 10.0.10.96:9116  # Dirección del SNMP Exporter
+      - source_labels: [__identity__]
+        target_label: identity

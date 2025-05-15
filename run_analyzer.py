@@ -1,15 +1,17 @@
 import click
 
 from network_analyzer.ai_network_analyzer import AiAnalyzer
-from network_analyzer.legacy_network_analyzer import LegacyAnalyzer
+from network_analyzer.threshold_network_analyzer import ThresholdAnalyzer
 
 @click.command()
 @click.option('-t','--analyzer-type', type=click.Choice(['ai', 'legacy'], case_sensitive=False), default='ai', help='Select analyzer type. AI or legacy')
-def run_analyzer(analyzer_type):
+@click.option('--data-source', type=click.Choice(['prometheus'], case_sensitive=False), default='prometheus', help='Select data source. Currently only Prometheus available.')
+def run_analyzer(analyzer_type, data_source):
     if analyzer_type == 'ai':
-        analyzer = AiAnalyzer()
+        Analyzer = AiAnalyzer
     else:
-        analyzer = LegacyAnalyzer()
+        Analyzer = ThresholdAnalyzer
+    analyzer =Analyzer() # TODO add params
     print(analyzer)
 
 if __name__ == '__main__':
