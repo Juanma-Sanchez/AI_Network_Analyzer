@@ -6,7 +6,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.90
   exporter:
     image: prom/snmp-exporter:latest
@@ -15,7 +15,7 @@ services:
     ports:
       - "9116:9116"
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.96
   web:
     build:
@@ -95,7 +95,7 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.101
       internet:
         ipv4_address: 10.0.0.1
@@ -128,7 +128,7 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.102
       agg1:
         ipv4_address: 10.0.11.3
@@ -163,7 +163,7 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.103
       agg2:
         ipv4_address: 10.0.12.3
@@ -193,7 +193,7 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.104
       local1:
         ipv4_address: 10.0.1.1
@@ -227,7 +227,7 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.105
       local2:
         ipv4_address: 10.0.2.1
@@ -259,7 +259,7 @@ services:
     - NET_RAW
     - SYS_ADMIN
     networks:
-      mgmt:
+      default:
         ipv4_address: 10.0.10.106
       local3:
         ipv4_address: 10.0.3.1
@@ -268,7 +268,7 @@ services:
       agg9:
         ipv4_address: 10.0.19.3
 networks:
-  mgmt:
+  default:
     driver: bridge
     ipam:
       config:
