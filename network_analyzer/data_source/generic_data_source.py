@@ -5,5 +5,5 @@ class GenericDataSource:
     def retrieve_previous_info(self, delta, polling_period) -> dict:
         return {}
 
-    def retireve_info(self) -> dict:
+    def retrieve_info(self) -> dict:
         return {}

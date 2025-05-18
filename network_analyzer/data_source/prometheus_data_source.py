@@ -11,6 +11,40 @@ class PrometheusDataSource(GenericDataSource):
         self.device_name_label = device_name_label
         self.interface_name_label = interface_name_label
 
+    def retrieve_info(self):
+        timestamp = datetime.now(timezone.utc).replace(tzinfo=None)
+        traffic_in_data = requests.get(
+            url=f'{self.data_source_address}/api/v1/query',
+            params={
+                'query': self.traffic_in_metric,
+                'time': timestamp.isoformat() + 'Z'
+            }
+        ).json()
+        traffic_out_data = requests.get(
+            url=f'{self.data_source_address}/api/v1/query',
+            params={
+                'query': self.traffic_out_metric,
+                'time': timestamp.isoformat() + 'Z'
+            }
+        ).json()
+        info = {}
+        for data_list,label in [
+                (traffic_in_data['data']['result'], 'traffic_in'),
+                (traffic_out_data['data']['result'], 'traffic_out')
+            ]:
+            for data in data_list:
+                device = data['metric'][self.device_name_label]
+                interface = data['metric'][self.interface_name_label]
+                value = data['value']
+                if not value[0] in info:
+                    info[value[0]] = {}
+                if not device in info[value[0]]:
+                    info[value[0]][device] = {}
+                if not interface in info[value[0]][device]:
+                    info[value[0]][device][interface] = {}
+                info[value[0]][device][interface][label] = int(value[1])
+        return info
+
     def retrieve_previous_info(self, delta, polling_period):
         previous_info = {}
         end = datetime.now(timezone.utc).replace(tzinfo=None)
@@ -38,7 +72,7 @@ class PrometheusDataSource(GenericDataSource):
                 (traffic_out_data['data']['result'], 'traffic_out')
             ]:
             for data in data_list:
-                device = data['metric'][self.device_name_label] 
+                device = data['metric'][self.device_name_label]
                 interface = data['metric'][self.interface_name_label]
                 for value in data['values']:
                     if not value[0] in previous_info:
@@ -48,5 +82,4 @@ class PrometheusDataSource(GenericDataSource):
                     if not interface in previous_info[value[0]][device]:
                         previous_info[value[0]][device][interface] = {}
                     previous_info[value[0]][device][interface][label] = int(value[1])
-                
         return previous_info
