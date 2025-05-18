@@ -1,0 +1,291 @@
+{
+    "nodes": [
+        {
+            "id": "R1",
+            "type": "router",
+            "position": {
+                "x": 300,
+                "y": 60
+            },
+            "vertices": [
+                {
+                    "id": "eth0",
+                    "position": {
+                        "x": 290,
+                        "y": 75
+                    }
+                },
+                {
+                    "id": "eth1",
+                    "position": {
+                        "x": 310,
+                        "y": 75
+                    }
+                }
+            ]
+        },
+        {
+            "id": "R2",
+            "type": "router",
+            "position": {
+                "x": 240,
+                "y": 180
+            },
+            "vertices": [
+                {
+                    "id": "eth0",
+                    "position": {
+                        "x": 240,
+                        "y": 160
+                    }
+                },
+                {
+                    "id": "eth1",
+                    "position": {
+                        "x": 260,
+                        "y": 180
+                    }
+                },
+                {
+                    "id": "eth2",
+                    "position": {
+                        "x": 230,
+                        "y": 195
+                    }
+                },
+                {
+                    "id": "eth3",
+                    "position": {
+                        "x": 250,
+                        "y": 195
+                    }
+                }
+            ]
+        },
+        {
+            "id": "R3",
+            "type": "router",
+            "position": {
+                "x": 360,
+                "y": 180
+            },
+            "vertices": [
+                {
+                    "id": "eth0",
+                    "position": {
+                        "x": 360,
+                        "y": 160
+                    }
+                },
+                {
+                    "id": "eth1",
+                    "position": {
+                        "x": 340,
+                        "y": 180
+                    }
+                },
+                {
+                    "id": "eth2",
+                    "position": {
+                        "x": 350,
+                        "y": 195
+                    }
+                },
+                {
+                    "id": "eth3",
+                    "position": {
+                        "x": 370,
+                        "y": 195
+                    }
+                }
+            ]
+        },
+        {
+            "id": "R4",
+            "type": "router",
+            "position": {
+                "x": 180,
+                "y": 300
+            },
+            "vertices": [
+                {
+                    "id": "eth0",
+                    "position": {
+                        "x": 180,
+                        "y": 280
+                    }
+                },
+                {
+                    "id": "eth1",
+                    "position": {
+                        "x": 200,
+                        "y": 300
+                    }
+                }
+            ]
+        },
+        {
+            "id": "R5",
+            "type": "router",
+            "position": {
+                "x": 300,
+                "y": 300
+            },
+            "vertices": [
+                {
+                    "id": "eth0",
+                    "position": {
+                        "x": 285,
+                        "y": 290
+                    }
+                },
+                {
+                    "id": "eth1",
+                    "position": {
+                        "x": 315,
+                        "y": 290
+                    }
+                },
+                {
+                    "id": "eth2",
+                    "position": {
+                        "x": 280,
+                        "y": 300
+                    }
+                },
+                {
+                    "id": "eth3",
+                    "position": {
+                        "x": 320,
+                        "y": 300
+                    }
+                }
+            ]
+        },
+        {
+            "id": "R6",
+            "type": "router",
+            "position": {
+                "x": 420,
+                "y": 300
+            },
+            "vertices": [
+                {
+                    "id": "eth0",
+                    "position": {
+                        "x": 420,
+                        "y": 280
+                    }
+                },
+                {
+                    "id": "eth1",
+                    "position": {
+                        "x": 400,
+                        "y": 300
+                    }
+                }
+            ]
+        }
+    ],
+    "edges": [
+        {
+            "id": "aggr1",
+            "source": {
+                "node": "R1",
+                "vertex": "eth0"
+            },
+            "destination": {
+                "node": "R2",
+                "vertex": "eth0"
+            }
+        },
+        {
+            "id": "aggr2",
+            "source": {
+                "node": "R1",
+                "vertex": "eth1"
+            },
+            "destination": {
+                "node": "R3",
+                "vertex": "eth0"
+            }
+        },
+        {
+            "id": "aggr3",
+            "source": {
+                "node": "R2",
+                "vertex": "eth1"
+            },
+            "destination": {
+                "node": "R3",
+                "vertex": "eth1"
+            }
+        },
+        {
+            "id": "aggr4",
+            "source": {
+                "node": "R2",
+                "vertex": "eth2"
+            },
+            "destination": {
+                "node": "R4",
+                "vertex": "eth0"
+            }
+        },
+        {
+            "id": "aggr5",
+            "source": {
+                "node": "R2",
+                "vertex": "eth3"
+            },
+            "destination": {
+                "node": "R5",
+                "vertex": "eth0"
+            }
+        },
+        {
+            "id": "aggr6",
+            "source": {
+                "node": "R3",
+                "vertex": "eth2"
+            },
+            "destination": {
+                "node": "R5",
+                "vertex": "eth1"
+            }
+        },
+        {
+            "id": "aggr7",
+            "source": {
+                "node": "R3",
+                "vertex": "eth3"
+            },
+            "destination": {
+                "node": "R6",
+                "vertex": "eth0"
+            }
+        },
+        {
+            "id": "aggr8",
+            "source": {
+                "node": "R4",
+                "vertex": "eth1"
+            },
+            "destination": {
+                "node": "R5",
+                "vertex": "eth2"
+            }
+        },
+        {
+            "id": "aggr9",
+            "source": {
+                "node": "R5",
+                "vertex": "eth3"
+            },
+            "destination": {
+                "node": "R6",
+                "vertex": "eth1"
+            }
+        }
+    ]
+}

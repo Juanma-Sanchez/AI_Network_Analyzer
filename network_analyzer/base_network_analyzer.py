@@ -1,6 +1,7 @@
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+from network_analyzer.gui import SimpleGui
 from network_analyzer.data_source.prometheus_data_source import PrometheusDataSource
 
 class BaseAnalyzer:
@@ -22,8 +23,7 @@ class BaseAnalyzer:
         self.current_timestamp = None
         self.traffic_type = traffic_type
         if gui:
-            # TODO intialize GUI
-            pass
+            self.gui = SimpleGui(gui, self.network_graph, gui_window_height, gui_window_width)
         else:
             self.gui = None
         self.initialize_graph(self.data_source.retrieve_previous_info(initial_delta, self.polling_period))
@@ -85,8 +85,12 @@ class BaseAnalyzer:
                 "last_bandwidth_in": last_bandwidth_in,
                 "last_bandwidth_out": last_bandwidth_out
             }
-        print('WARNING ABNORMAL TRAFFIC PATTERN IN INTERFACE {} OF DEVICE {}'.format(interface, device))
-        print(json.dumps(self.network_graph[device][interface], indent=2))
+        print('{} ABNORMAL TRAFFIC PATTERN IN INTERFACE {} OF DEVICE {}: {}'.format(
+            self.current_timestamp.ctime().
+            interface,
+            device,
+            message
+        ))
 
     def bytes_to_bandwidth(self, trace):
         new_trace = {}
@@ -118,17 +122,12 @@ class BaseAnalyzer:
         pass
 
     def start(self):
-        if self.gui:
-            # TODO start GUI
-            pass
-        try:
-            while(True):
+        while(True):
+            if datetime.now(timezone.utc).replace(tzinfo=None) >= (self.last_timestamp + timedelta(seconds=self.polling_period)):
                 info = self.data_source.retrieve_info()
+                print(info)
                 for timestamp,trace in info.items():
                     self.process_trace(timestamp, trace)
-                time.sleep(self.polling_period)
-        except Exception as e:
             if self.gui:
-                # TODO stop GUI
-                pass
-            raise e
+                self.gui.draw()
+            time.sleep(2)
