@@ -10,7 +10,7 @@ from network_analyzer.threshold_network_analyzer import ThresholdAnalyzer
 @click.option('-p', '--polling-period', default=60, help='')
 @click.option('--gui', default=None, help="JSON file indicating the topology to represent in the GUI. If none, the analyzer will run in CLI mode.")
 @click.option('--gui-window-height', default=600, help="Height of the GUI window in pixels.")
-@click.option('--gui-window-width', default=600, help="Width of the GUI window in pixels.")
+@click.option('--gui-window-width', default=800, help="Width of the GUI window in pixels.")
 @click.option('--traffic-type', type=click.Choice(['bandwidth', 'bytes'], case_sensitive=False), default='bytes', help='Indicates the type of traffic obtained from the data source. Bytes will be transformed into bandwidth for analysis.')
 @click.option('--initial-delta', default=1200)
 @click.option('--max-traces', default=100, help="Maximum number of traces used. It helps with performance and prevents overflowing Gemini's token count.")

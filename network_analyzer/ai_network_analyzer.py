@@ -103,7 +103,7 @@ class AiAnalyzer(BaseAnalyzer):
                 contents=self.context,
                 config=self.config
             ):
-                response += chunk.text
+                response += chunk.text or ''
             self.context.append(
                 types.Content(
                     role="model",
@@ -145,3 +145,12 @@ class AiAnalyzer(BaseAnalyzer):
                             last_bandwidth_in=trace[device][interface]['average_input_bandwidth'],
                             last_bandwidth_out=trace[device][interface]['average_output_bandwidth']
                         )
+        else:
+            for device in trace:
+                for interface in trace[device]:
+                    self.set_normal(
+                        device,
+                        interface,
+                        last_bandwidth_in=trace[device][interface]['average_input_bandwidth'],
+                        last_bandwidth_out=trace[device][interface]['average_output_bandwidth']
+                    )

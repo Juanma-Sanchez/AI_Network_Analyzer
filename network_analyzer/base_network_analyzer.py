@@ -18,12 +18,12 @@ class BaseAnalyzer:
             )
         self.polling_period = polling_period
         self.max_traces = max_traces
-        self.network_graph = {}
+        self.network_status = {}
         self.last_timestamp = None
         self.current_timestamp = None
         self.traffic_type = traffic_type
         if gui:
-            self.gui = SimpleGui(gui, self.network_graph, gui_window_height, gui_window_width)
+            self.gui = SimpleGui(gui, self.network_status, gui_window_height, gui_window_width)
         else:
             self.gui = None
         self.initialize_graph(self.data_source.retrieve_previous_info(initial_delta, self.polling_period))
@@ -44,49 +44,53 @@ class BaseAnalyzer:
                 for interface in trace[device]:
                     self.set_normal(device, interface)
                     if self.traffic_type == 'bytes':
-                        self.network_graph[device][interface]['traffic_in'] = trace[device][interface]['traffic_in']
-                        self.network_graph[device][interface]['traffic_out'] = trace[device][interface]['traffic_out']
+                        self.network_status[device][interface]['traffic_in'] = trace[device][interface]['traffic_in']
+                        self.network_status[device][interface]['traffic_out'] = trace[device][interface]['traffic_out']
         self.last_timestamp = self.current_timestamp
 
     def set_normal(self, device, interface, last_bandwidth_in=0, last_bandwidth_out=0):
-        if not device in self.network_graph:
-            self.network_graph[device] = {}
-        if interface in self.network_graph[device]:
-            if self.network_graph[device][interface].get('status') != 'Normal':
-                self.network_graph[device][interface]['last_change'] = self.current_timestamp.ctime()
-                self.network_graph[device][interface]['message'] = ""
-            self.network_graph[device][interface]['status'] = 'Normal'
-            self.network_graph[device][interface]['last_bandwidth_in'] = last_bandwidth_in
-            self.network_graph[device][interface]['last_bandwidth_out'] = last_bandwidth_out
+        if not device in self.network_status:
+            self.network_status[device] = {}
+        if interface in self.network_status[device]:
+            if self.network_status[device][interface].get('status') != 'Normal':
+                self.network_status[device][interface]['last_change'] = self.current_timestamp.ctime()
+                self.network_status[device][interface]['message'] = ""
+            self.network_status[device][interface]['status'] = 'Normal'
+            self.network_status[device][interface]['last_update'] = self.current_timestamp
+            self.network_status[device][interface]['last_bandwidth_in'] = last_bandwidth_in
+            self.network_status[device][interface]['last_bandwidth_out'] = last_bandwidth_out
         else:
-            self.network_graph[device][interface] = {
+            self.network_status[device][interface] = {
                 "status": "Normal",
                 "last_change": self.current_timestamp.ctime(),
                 "message": "",
+                "last_update": self.current_timestamp,
                 "last_bandwidth_in": last_bandwidth_in,
                 "last_bandwidth_out": last_bandwidth_out
             }
 
     def set_abnormal(self, device, interface, message, last_bandwidth_in=0, last_bandwidth_out=0):
-        if not device in self.network_graph:
-            self.network_graph[device] = {}
-        if interface in self.network_graph[device]:
-            if self.network_graph[device][interface].get('status') != 'Abnormal':
-                self.network_graph[device][interface]['last_change'] = self.current_timestamp.ctime()
-            self.network_graph[device][interface]['message'] = message
-            self.network_graph[device][interface]['status'] = 'Abormal'
-            self.network_graph[device][interface]['last_bandwidth_in'] = last_bandwidth_in
-            self.network_graph[device][interface]['last_bandwidth_out'] = last_bandwidth_out
+        if not device in self.network_status:
+            self.network_status[device] = {}
+        if interface in self.network_status[device]:
+            if self.network_status[device][interface].get('status') != 'Abnormal':
+                self.network_status[device][interface]['last_change'] = self.current_timestamp.ctime()
+            self.network_status[device][interface]['message'] = message
+            self.network_status[device][interface]['status'] = 'Abormal'
+            self.network_status[device][interface]['last_update'] = self.current_timestamp
+            self.network_status[device][interface]['last_bandwidth_in'] = last_bandwidth_in
+            self.network_status[device][interface]['last_bandwidth_out'] = last_bandwidth_out
         else:
-            self.network_graph[device][interface] = {
+            self.network_status[device][interface] = {
                 "status": "Abormal",
                 "last_change": self.current_timestamp.ctime(),
                 "message": message,
+                "last_update": self.current_timestamp,
                 "last_bandwidth_in": last_bandwidth_in,
                 "last_bandwidth_out": last_bandwidth_out
             }
         print('{} ABNORMAL TRAFFIC PATTERN IN INTERFACE {} OF DEVICE {}: {}'.format(
-            self.current_timestamp.ctime().
+            self.current_timestamp.ctime(),
             interface,
             device,
             message
@@ -96,16 +100,18 @@ class BaseAnalyzer:
         new_trace = {}
         for device in trace:
             new_trace[device] = {}
-            if not device in self.network_graph:
-                self.network_graph[device] = {}
+            if not device in self.network_status:
+                self.network_status[device] = {}
             for interface in trace[device]:
                 new_trace[device][interface] = {}
-                if interface in self.network_graph[device]:
-                    delta_time = (self.current_timestamp - self.last_timestamp).total_seconds()
-                    delta_bytes_in = trace[device][interface]['traffic_in'] - self.network_graph[device][interface]['traffic_in']
+                if interface in self.network_status[device]:
+                    delta_time = (
+                        self.current_timestamp - self.network_status[device][interface]['last_update']
+                    ).total_seconds()
+                    delta_bytes_in = trace[device][interface]['traffic_in'] - self.network_status[device][interface]['traffic_in']
                     if delta_bytes_in < 0:
                         delta_bytes_in += 2**32
-                    delta_bytes_out = trace[device][interface]['traffic_out'] - self.network_graph[device][interface]['traffic_out']
+                    delta_bytes_out = trace[device][interface]['traffic_out'] - self.network_status[device][interface]['traffic_out']
                     if delta_bytes_out < 0:
                         delta_bytes_out += 2**32
                     new_trace[device][interface]['average_input_bandwidth'] = delta_bytes_in/delta_time
@@ -114,20 +120,24 @@ class BaseAnalyzer:
                     self.set_normal(device, interface)
                     new_trace[device][interface]['average_input_bandwidth'] = 0
                     new_trace[device][interface]['average_output_bandwidth'] = 0
-                self.network_graph[device][interface]['traffic_in'] = trace[device][interface]['traffic_in']
-                self.network_graph[device][interface]['traffic_out'] = trace[device][interface]['traffic_out']
+                self.network_status[device][interface]['traffic_in'] = trace[device][interface]['traffic_in']
+                self.network_status[device][interface]['traffic_out'] = trace[device][interface]['traffic_out']
         return new_trace
 
     def internal_trace_processing(self, trace, analysis=True):
         pass
 
     def start(self):
-        while(True):
-            if datetime.now(timezone.utc).replace(tzinfo=None) >= (self.last_timestamp + timedelta(seconds=self.polling_period)):
+        if self.gui:
+            self.gui.launch()
+        try:
+            while(True):
+                time.sleep(self.polling_period)
                 info = self.data_source.retrieve_info()
-                print(info)
                 for timestamp,trace in info.items():
-                    self.process_trace(timestamp, trace)
-            if self.gui:
-                self.gui.draw()
-            time.sleep(2)
+                    self.process_trace(timestamp, trace) 
+        except Exception as e:
+            self.gui.keep_drawing = False
+            time.sleep(0.5)
+            del self.gui
+            raise e
