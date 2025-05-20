@@ -12,7 +12,7 @@ Using an AI for this analysis allows us to obtain information without specifical
 
 ## Threshold analyzer
 
-The threshold analyzer takes information from the traffic metrics per interface to extrapolate a gaussian distribution and determine the upper and lower thresholds of a 90% probability confidence interval.
+The threshold analyzer takes information from the traffic metrics per interface to extrapolate a gaussian distribution and determine the upper and lower thresholds of a 95% probability confidence interval.
 
 TODO: add discrete data to gaussian distribution with confidence interval graphic
 

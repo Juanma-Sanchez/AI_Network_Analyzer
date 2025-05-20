@@ -12,4 +12,4 @@ if __name__ == '__main__':
 
         verbose_ping(random.choice(data["hosts"]))
 
-        time.sleep(random.uniform(2,5))
+        time.sleep(random.uniform(0.5,1.5))

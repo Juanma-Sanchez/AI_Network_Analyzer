@@ -115,7 +115,7 @@ class BaseAnalyzer:
                     if delta_bytes_out < 0:
                         delta_bytes_out += 2**32
                     new_trace[device][interface]['average_input_bandwidth'] = delta_bytes_in/delta_time
-                    new_trace[device][interface]['average_output_bandwidth'] = delta_bytes_in/delta_time
+                    new_trace[device][interface]['average_output_bandwidth'] = delta_bytes_out/delta_time
                 else:
                     self.set_normal(device, interface)
                     new_trace[device][interface]['average_input_bandwidth'] = 0
